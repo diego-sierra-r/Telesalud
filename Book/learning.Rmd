@@ -1,0 +1,62 @@
+---
+title: "R_epidemiology_book"
+author: "Diego"
+date: "2024-06-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Basics
+
+```{r}
+library(Epi)
+data(births)
+stat.table
+stat.table(sex, mean(bweight), data=births)
+```
+## Measures of disease occurrence
+
+### Prevenlence
+
+```{r}
+# prevalence = The prevalence of a disease in a population is the fraction of the population that has the disease at a given date
+
+(16281/5534738) * 100 #empirical prevalence
+
+# theoretical prevalence
+#theoretical prevalence is the probability that a randomly chosen person from the
+#population has colorectal cancer
+library( Epi )
+N <- 5534738
+X <- 16281
+mp <- glm( cbind( X, N-X ) ~ 1, family=binomial )
+round( ci.pred( mp ) * 100, 4 )
+
+```
+### Mortality rate
+
+```{r}
+#Mortality is typically reported as a number of people that have died in a population #of a certain size
+
+##Empirical mortality rate
+(2648 / 150000)*1000
+#This is a mortality of 17.6 per 1,000 without time correction
+(2648 / (150000*2))*1000 # Mortality rate adjusted by two years
+
+## Theoretical mortality rate
+# It is the probability of dying in a small interval, relative to the length of the interval
+
+library( Epi )
+D <- 2648
+Y <- 300000 #The double because 2 years
+mm <- glm( D ~ 1, offset=log(Y), family=poisson )
+round( ci.pred( mm, newdata=data.frame(Y=1000) ), 3 )
+
+```
+
+
+
+
